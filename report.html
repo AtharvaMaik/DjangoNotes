@@ -8,8 +8,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <!-- PDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
+        /* Aptos Font Fallback */
         @font-face {
             font-family: 'Aptos';
             src: local('Aptos'), local('Segoe UI'), local('Inter'), local('system-ui');
@@ -19,11 +22,10 @@
             --primary-blue: #2563eb;
             --text-main: #1e293b;
             --text-muted: #64748b;
-            --bg-page: #f1f5f9;
         }
 
         body {
-            background-color: var(--bg-page);
+            background-color: #f1f5f9;
             font-family: 'Aptos', 'Segoe UI', 'Inter', sans-serif;
             font-size: 11pt;
             color: var(--text-main);
@@ -32,114 +34,72 @@
             padding: 0;
         }
 
-        /* Essential for Print Layout */
-        .report-page {
+        /* Container for the actual report content */
+        #reportContent {
             background: white;
             width: 210mm;
-            min-height: 297mm;
-            padding: 25mm 20mm;
-            margin: 40px auto;
+            margin: 0 auto;
+            padding: 30mm 20mm;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            page-break-after: always; /* Force break after each div section */
         }
 
-        /* Reset the last page break */
-        .report-page:last-of-type {
-            page-break-after: auto;
+        /* Section Styling */
+        section {
+            margin-bottom: 40px;
         }
 
-        .title-page {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            height: 247mm;
-        }
-
-        .hero-image {
-            width: 85%;
-            max-width: 500px;
-            margin: 30px auto;
-            border-radius: 12px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .title-main {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
-            color: #0f172a;
-            margin-bottom: 0.5rem;
-        }
-
-        .subtitle {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .author-box {
-            font-size: 1rem;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 20px;
-        }
-
-        .author-name {
-            font-weight: 600;
-            color: var(--primary-blue);
-        }
-
-        /* Spacing Fixes */
         h2 {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             color: #0f172a;
             border-bottom: 2px solid var(--primary-blue);
             padding-bottom: 10px;
-            margin-top: 0; /* Page break handles the top gap */
+            margin-top: 50px; /* Space between sections */
             margin-bottom: 25px;
-            page-break-before: auto;
+        }
+
+        h2:first-of-type {
+            margin-top: 0;
         }
 
         h3 {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             margin-top: 30px;
-            margin-bottom: 15px;
             font-weight: 600;
         }
 
         p {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
             text-align: justify;
         }
 
-        /* Prevent ugly splits */
-        .screenshot-container, 
-        .tech-highlight, 
-        pre, 
-        table, 
-        .author-box {
+        /* Image & Figure Formatting */
+        .figure {
+            margin: 30px 0;
+            text-align: center;
             page-break-inside: avoid;
-            break-inside: avoid;
         }
 
         .screenshot {
             width: 100%;
-            border-radius: 10px;
+            border-radius: 12px;
             border: 1px solid #e2e8f0;
-            margin-bottom: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .caption {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
+            margin-top: 10px;
             font-style: italic;
         }
 
-        .tech-highlight {
+        /* Utility Boxes */
+        .tech-card {
             background-color: #f8fafc;
             border-left: 4px solid var(--primary-blue);
             padding: 20px;
             margin: 25px 0;
+            page-break-inside: avoid;
         }
 
         pre {
@@ -148,184 +108,202 @@
             padding: 15px;
             border-radius: 8px;
             font-size: 0.8rem;
-            margin-bottom: 25px;
+            margin-top: 15px;
+            page-break-inside: avoid;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 25px 0;
+            margin: 30px 0;
+            page-break-inside: avoid;
         }
 
-        th {
+        th { background-color: var(--primary-blue); color: white; padding: 12px; text-align: left; }
+        td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+
+        /* Floating Controls */
+        #controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .btn-download {
             background-color: var(--primary-blue);
             color: white;
-            padding: 12px;
-            text-align: left;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+            transition: all 0.3s;
         }
 
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #e2e8f0;
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.4);
+            color: white;
         }
 
+        /* PDF Generation Overrides */
         @media print {
-            body { background: none; }
-            .report-page { 
+            body { background: white; padding: 0; }
+            #reportContent { 
+                width: 100%; 
                 margin: 0; 
+                padding: 0; /* Library handles margins */
                 box-shadow: none; 
-                width: 210mm; 
-                height: 297mm;
-                border: none;
             }
-            .no-print { display: none; }
-            /* Explicitly handle sections if the div approach isn't enough */
-            h2 { break-before: page; }
+            #controls { display: none !important; }
+            h2 { page-break-before: always; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container text-center mb-4 no-print mt-5">
-        <div class="alert alert-success d-inline-block shadow-sm">
-            <strong>Layout Fixed!</strong> Every section (H2) now starts on a <strong>clean new page</strong>. <br>
-            Press <code>Ctrl + P</code>, check "Background Graphics", and select "Save as PDF".
-        </div>
+    <div id="controls" class="no-print">
+        <button onclick="generatePDF()" class="btn btn-download">
+            Download Final Report (PDF)
+        </button>
     </div>
 
-    <!-- PAGE 1: TITLE PAGE -->
-    <div class="report-page">
-        <div class="title-page">
-            <div>
-                <h1 class="title-main">Minimalist<br>Full-Stack Notes App</h1>
-                <p class="subtitle">Semester Project | Web Programming Lab</p>
-                <img src="main_app.png" alt="Application Hero Shot" class="hero-image">
+    <div id="reportContent">
+        <!-- TITLE PAGE -->
+        <div style="text-align: center; height: 1000px; display: flex; flex-direction: column; justify-content: center; padding-bottom: 200px;">
+            <h1 style="font-family: 'Playfair Display', serif; font-size: 4rem; margin-bottom: 10px;">Minimalist Notes App</h1>
+            <p style="text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 60px;">Final Project Report | Web Programming Lab</p>
+            
+            <img src="main_app.png" alt="Hero Image" style="width: 80%; max-width: 500px; margin: 0 auto 60px auto; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+            
+            <div style="border-top: 1px solid #e2e8f0; padding-top: 40px; font-size: 1.2rem;">
+                <p>SUBMITTED BY:</p>
+                <p style="font-weight: 600; color: var(--primary-blue); margin: 5px 0;">Atharva Maikhuri (235816206)</p>
+                <p style="font-weight: 600; color: var(--primary-blue); margin: 5px 0;">Harshita Gaurav (235816036)</p>
             </div>
             
-            <div class="author-box">
-                <p>PROJECT SUBMITTED BY:</p>
-                <p><span class="author-name">Atharva Maikhuri</span> (235816206)</p>
-                <p><span class="author-name">Harshita Gaurav</span> (235816036)</p>
-            </div>
-
-            <div>
+            <div style="margin-top: 100px; color: var(--text-muted);">
                 <p>APRIL 14, 2026</p>
-                <p class="small text-secondary">DEPARTMENT OF COMPUTER APPLICATIONS</p>
+                <p style="font-size: 0.9rem;">DEPARTMENT OF COMPUTER APPLICATIONS</p>
             </div>
         </div>
+
+        <!-- SECTION 1 -->
+        <section id="section1">
+            <h2>1. Project Objective and Scope</h2>
+            <p>The core objective of this project is to develop a lightweight, user-friendly, and highly interactive Note-Taking web application. It serves as a comprehensive demonstration of Full-Stack development concepts, focusing on the seamless integration of a Python-based backend (Django) with a dynamic JavaScript frontend (jQuery & AJAX).</p>
+            <p>The project scope encompasses real-time data management through a RESTful architecture, ensuring a smooth user experience that mirrors modern Single-Page Applications (SPAs).</p>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section id="section2">
+            <h2>2. Design Philosophy: The Power of Minimalism</h2>
+            <p>In modern web development, "Minimalism" is not just an aesthetic choice but a usability priority. This application was designed to reduce cognitive load by focusing on core functionality while ensuring high-quality interactions. By avoiding the common "purple" color palettes of generic templates and opting for a professional Azure/Slate theme, we created a tool that feels focused and purpose-built.</p>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section id="section3">
+            <h2>3. Detailed Technology Stack</h2>
+            <p>This project utilizes a curated stack designed for performance and rapid development.</p>
+            <div class="tech-card">
+                <h5>Backend: Django Ecosystem</h5>
+                <p>Django serves as the "brain," providing a high-security environment with an integrated Object-Relational Mapper (ORM). This abstraction allows us to treat database rows as Python objects.</p>
+            </div>
+            <div class="tech-card">
+                <h5>Frontend: Bootstrap 5 & jQuery</h5>
+                <p>Bootstrap provides the flexible grid system, while jQuery acts as the logic engine. jQuery was specifically chosen for its efficient handling of AJAX requests.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 4 -->
+        <section id="section4">
+            <h2>4. Scalability and Efficiency</h2>
+            <p>While currently utilizing an SQLite backend, the system is designed with scalability in mind. The Django ORM allows for a "plug-and-play" transition to enterprise-grade databases like PostgreSQL without changing business logic.</p>
+            <div class="figure">
+                <img src="main_app.png" class="screenshot" alt="Main Dashboard">
+                <p class="caption">Figure 1.0: The asynchronous notes list and real-time statistics panel.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 5 -->
+        <section id="section5">
+            <h2>5. System Architecture</h2>
+            <p>The application follows the Model-View-Template (MVT) design pattern, ensuring a clean separation of concerns between data, logic, and presentation.</p>
+            <h3>5.1 Request Lifecycle (The AJAX Loop)</h3>
+            <p>Every dynamic update in the app follows a high-speed lifecycle where jQuery stops the page reload, sends an AJAX POST request, Django processes it, and the server returns a success signal.</p>
+        </section>
+
+        <!-- SECTION 6 -->
+        <section id="section6">
+            <h2>6. Security and Input Integrity</h2>
+            <p>Security is a primary pillar of this project. Even in a minimal application, best practices are enforced to protect the user's data integrity.</p>
+            <div class="figure">
+                <img src="validation_error.png" class="screenshot" alt="Validation Error">
+                <p class="caption">Figure 2.0: Dynamic validation preventing empty entries with high-contrast red feedback.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 7 -->
+        <section id="section7">
+            <h2>7. RESTful API Reference</h2>
+            <p>The backend serves as a headless API provider, returning standardized JSON data.</p>
+            <table>
+                <thead>
+                    <tr><th>Method</th><th>URL</th><th>Function</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>GET</td><td>/api/notes/</td><td>Fetch latest notes.</td></tr>
+                    <tr><td>POST</td><td>/api/add/</td><td>Add a new note.</td></tr>
+                    <tr><td>POST</td><td>/api/update/&lt;id&gt;/</td><td>Update content.</td></tr>
+                    <tr><td>DELETE</td><td>/api/delete/&lt;id&gt;/</td><td>Remove permanently.</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECTION 8 -->
+        <section id="section8">
+            <h2>8. Dynamic Modals & Maintenance</h2>
+            <p>A centered editing experience is provided via Bootstrap Modals. This ensures the user stays focused on their content while making updates.</p>
+            <div class="figure">
+                <img src="edit_modal.png" class="screenshot" alt="Edit Modal">
+                <p class="caption">Figure 3.0: Stylized Edit Modal providing a focused environment for note updates.</p>
+            </div>
+        </section>
+
+        <!-- CONCLUSION -->
+        <section id="conclusion">
+            <h2>9. Conclusion</h2>
+            <p>The Minimalist Notes Application successfully fulfills all requirements. By bridging the gap between Python server-side strengths and JavaScript frontend agility, we have produced a modern, sleek, and highly functional web application.</p>
+            <div style="margin-top: 80px; text-align: center; color: var(--text-muted); border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                <p><strong>END OF PROJECT REPORT</strong></p>
+                <p>Atharva Maikhuri | Harshita Gaurav</p>
+            </div>
+        </section>
     </div>
 
-    <!-- PAGE 2: OBJECTIVE & DESIGN -->
-    <div class="report-page">
-        <h2>1. Project Objective and Scope</h2>
-        <p>The core objective of this project is to develop a lightweight, user-friendly, and highly interactive Note-Taking web application. It serves as a comprehensive demonstration of Full-Stack development concepts, focusing on the seamless integration of a Python-based backend (Django) with a dynamic JavaScript frontend (jQuery & AJAX).</p>
-        <p>The project scope encompasses real-time data management through a RESTful architecture, ensuring a smooth user experience that mirrors modern Single-Page Applications (SPAs).</p>
+    <script>
+        function generatePDF() {
+            const element = document.getElementById('reportContent');
+            const opt = {
+                margin: [10, 0, 10, 0], // top, left, bottom, right in mm
+                filename: 'Notes_App_Project_Report.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['css', 'legacy'] }
+            };
 
-        <h2>2. Design Philosophy: The Power of Minimalism</h2>
-        <p>In modern web development, "Minimalism" is not just an aesthetic choice but a usability priority. This application was designed to reduce cognitive load by focusing on core functionality while ensuring high-quality interactions. By avoiding the common "purple" color palettes of generic templates and opting for a professional Azure/Slate theme, we created a tool that feels focused and purpose-built.</p>
-        
-        <div class="tech-highlight">
-            <strong>Key Design Principles:</strong>
-            <ul>
-                <li><strong>No-Reload Interaction</strong>: Every core action (CRUD) is asynchronous.</li>
-                <li><strong>Visual Hierarchy</strong>: Prominent task statistics (Word Count/Note Count) provide immediate utility.</li>
-                <li><strong>Responsive Feedback</strong>: Transitions keep the user connected to the data lifecycle.</li>
-            </ul>
-        </div>
-    </div>
+            // New section break logic: any section should start on a new page except the first
+            const sections = element.querySelectorAll('h2');
+            sections.forEach((s, index) => {
+                if (index > 0) {
+                    s.style.pageBreakBefore = 'always';
+                }
+            });
 
-    <!-- PAGE 3: TECH STACK & SCALABILITY -->
-    <div class="report-page">
-        <h2>3. Detailed Technology Stack</h2>
-        <p>This project utilizes a curated stack designed for performance and rapid development.</p>
-        
-        <h3>3.1 Backend: Django & its Ecosystem</h3>
-        <p>Django serves as the "brain," providing a high-security environment with an integrated Object-Relational Mapper (ORM). This abstraction allows us to treat database rows as Python objects, preventing common errors and vulnerability exposures.</p>
-
-        <h3>3.2 Frontend: Bootstrap 5 & jQuery</h3>
-        <p>Bootstrap provides the flexible grid system, while jQuery acts as the logic engine. jQuery was specifically chosen for its efficient handling of AJAX requests and its broad compatibility across modern browsers.</p>
-
-        <h2>4. Scalability and Efficiency</h2>
-        <p>While currently utilizing an SQLite backend for its zero-configuration benefits, the system is designed with scalability in mind. The Django ORM allows for a "plug-and-play" transition to enterprise-grade databases like PostgreSQL or MySQL without changing a single line of business logic. Furthermore, the client-side search filtering is optimized to handle hundreds of notes with minimal latency, ensuring longevity as the user's data grows.</p>
-    </div>
-
-    <!-- PAGE 4: ARCHITECTURE -->
-    <div class="report-page">
-        <h2>5. System Architecture</h2>
-        <p>The application follows the <strong>Model-View-Template (MVT)</strong> design pattern, ensuring a clean separation of concerns between data, logic, and presentation.</p>
-
-        <div class="screenshot-container">
-            <img src="main_app.png" class="screenshot" alt="Dashboard View">
-            <div class="caption">Figure 1.0: Main Dashboard showing clean statistics and asynchronous notes list.</div>
-        </div>
-
-        <h3>5.1 Request Lifecycle (The AJAX Loop)</h3>
-        <p>Every dynamic update in the app follows this high-speed lifecycle:</p>
-        <ol>
-            <li><strong>The Trigger</strong>: The user submits a new note.</li>
-            <li><strong>The Intercept</strong>: jQuery stops the page from reloading.</li>
-            <li><strong>The Transmission</strong>: An AJAX <code>POST</code> request is sent with a JSON payload to the Django server.</li>
-            <li><strong>The Database Operation</strong>: The Django View processes the JSON and saves it through the ORM.</li>
-            <li><strong>The Feedback</strong>: The server returns a success signal. jQuery catches this and re-triggers the list refresh.</li>
-        </ol>
-    </div>
-
-    <!-- PAGE 6: SECURITY & VALIDATION -->
-    <div class="report-page">
-        <h2>6. Security and Input Integrity</h2>
-        <p>Security is a primary pillar of this project. Even in a minimal application, best practices are enforced to protect the user's data integrity.</p>
-
-        <h3>6.1 CSRF Protection in AJAX</h3>
-        <p>To prevent Cross-Site Request Forgery, every state-changing request (Add, Edit, Delete) includes a CSRF token. This is handled dynamically by extracting the cookie or using injected headers.</p>
-
-        <div class="screenshot-container">
-            <img src="validation_error.png" class="screenshot" alt="Validation View">
-            <div class="caption">Figure 2.0: Dynamic validation preventing empty entries with high-contrast red feedback.</div>
-        </div>
-    </div>
-
-    <!-- PAGE 7: API & MODALS -->
-    <div class="report-page">
-        <h2>7. RESTful API Reference</h2>
-        <p>The backend serves as a headless API provider, returning standardized JSON data.</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Method</th>
-                    <th>URL</th>
-                    <th>JSON Payload</th>
-                    <th>Function</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td><code>GET</code></td><td><code>/api/notes/</code></td><td>None</td><td>Fetch latest notes.</td></tr>
-                <tr><td><code>POST</code></td><td><code>/api/add/</code></td><td><code>{"content": "..."}</code></td><td>Add a new note.</td></tr>
-                <tr><td><code>POST</code></td><td><code>/api/update/&lt;id&gt;/</code></td><td><code>{"content": "..."}</code></td><td>Update content.</td></tr>
-                <tr><td><code>DELETE</code></td><td><code>/api/delete/&lt;id&gt;/</code></td><td>None</td><td>Remove permanently.</td></tr>
-            </tbody>
-        </table>
-
-        <h2>8. Dynamic Modals & Maintenance</h2>
-        <p>A centered editing experience is provided via Bootstrap Modals. This ensures the user stays focused on their content while making updates.</p>
-
-        <div class="screenshot-container">
-            <img src="edit_modal.png" class="screenshot" alt="Edit Feature View">
-            <div class="caption">Figure 3.0: Stylized Edit Modal providing a focused environment for note updates.</div>
-        </div>
-    </div>
-
-    <!-- PAGE 8: CONCLUSION -->
-    <div class="report-page">
-        <h2>9. Conclusion</h2>
-        <p>The Minimalist Notes Application successfully fulfills all technical and design requirements. By bridging the gap between Python's server-side strengths and JavaScript's frontend agility, we have produced a modern, sleek, and highly functional web application.</p>
-        
-        <div class="mt-5 text-center p-5 border-top">
-            <p><strong>END OF PROJECT REPORT</strong></p>
-            <p class="text-secondary small">Atharva Maikhuri (235816206) | Harshita Gaurav (235816036)</p>
-            <p class="small">April 14, 2026</p>
-        </div>
-    </div>
-
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
 </body>
 </html>
