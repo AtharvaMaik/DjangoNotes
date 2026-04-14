@@ -1,6 +1,18 @@
-# Project Documentation: Minimal Notes App
+## ✅ Requirement Compliance
 
-A professional, minimal, and fully functional Note-Taking application built as a full-stack web application.
+This project satisfies all Lab requirements for a full-stack web application:
+
+| Requirement | How it is Satisfied |
+| :--- | :--- |
+| **Complete Web App** | Features both a Django backend and a responsive jQuery frontend. |
+| **Structured HTML** | Standard HTML5 tags used in `index.html` for clean structure. |
+| **CSS & Bootstrap** | Custom CSS animations + Bootstrap 5 utility classes for styling. |
+| **JS & jQuery** | `index.js` logic handles all user events and UI state. |
+| **Dynamic AJAX** | All data operations (Add, Edit, Delete) are performed via background AJAX. |
+| **Python & Django** | Server-side logic, routing, and response handling built with Django. |
+| **Database Integration** | Uses **SQLite** via Django ORM (as requested for minimal setup). |
+| **RESTful API** | Implements standard REST endpoints returning JSON data. |
+| **Frontend/API Interaction**| The frontend consumes the REST API via asynchronous AJAX calls. |
 
 ---
 
