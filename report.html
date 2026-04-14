@@ -3,120 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Report - Notes App</title>
+    <title>Comprehensive Project Report - Minimalist Notes Application</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
     <style>
-        body { background-color: #f3f4f6; font-family: 'Segoe UI', serif; line-height: 1.6; }
-        .page { background: white; width: 210mm; min-height: 297mm; padding: 20mm; margin: 20px auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1, h2, h3 { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 30px; }
-        .title-page { text-align: center; padding-top: 100px; padding-bottom: 200px; border-bottom: none; }
-        .authors { font-size: 1.2rem; margin-top: 50px; color: #64748b; }
-        .screenshot { width: 100%; border-radius: 8px; border: 1px solid #e2e8f0; margin: 20px 0; }
-        code { background: #f1f5f9; padding: 2px 5px; border-radius: 4px; color: #be185d; }
-        pre { background: #1e293b; color: #f8fafc; padding: 15px; border-radius: 8px; overflow-x: auto; }
-        .tech-box { background: #eff6ff; border-left: 4px solid #2563eb; padding: 15px; margin: 20px 0; }
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --text-dark: #0f172a;
+            --bg-light: #f8fafc;
+        }
+        
+        body {
+            background-color: #e2e8f0;
+            font-family: 'Outfit', sans-serif;
+            color: #334155;
+            line-height: 1.8;
+            padding: 40px 0;
+        }
+
+        /* Page Layout for Printing */
+        .report-page {
+            background: white;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 25mm;
+            margin: 0 auto 30px auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            position: relative;
+        }
+
+        /* Title Page */
+        .title-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: center;
+        }
+
+        .title-main {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            color: var(--text-dark);
+            margin-top: 100px;
+        }
+
+        .submitted-by {
+            margin-top: 150px;
+            font-size: 1.25rem;
+        }
+
+        .student-info {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-top: 20px;
+        }
+
+        /* Headings */
+        h1, h2, h3 {
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+
+        /* Visuals */
+        .screenshot {
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            margin: 25px 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .fig-caption {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            margin-top: -15px;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        /* Tables & Code */
+        .table {
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        pre {
+            background-color: #1e293b;
+            color: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            margin-top: 15px;
+        }
+
+        .tech-card {
+            background: #eff6ff;
+            border-left: 5px solid var(--primary-color);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
         @media print {
-            body { background: none; }
-            .page { margin: 0; box-shadow: none; border: none; width: 100%; }
+            body { background: none; padding: 0; }
+            .report-page { margin: 0; box-shadow: none; width: 100%; height: auto; }
+            .no-print { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="page">
-        <div class="title-page">
-            <h1 style="font-size: 3.5rem; border: none;">Minimalist Full-Stack<br>Notes Application</h1>
-            <p style="font-size: 1.5rem; margin-top: 20px;">Semester Project Report - Web Programming</p>
-            <div class="authors">
-                <p><strong>Submitted By:</strong></p>
-                <p>Atharva Maikhuri (235816206)</p>
-                <p>Harshita Gaurav (235816036)</p>
-            </div>
-            <p style="margin-top: 100px;">April 14, 2026</p>
+
+    <div class="container text-center mb-4 no-print">
+        <div class="alert alert-info d-inline-block">
+            <strong>Ready to Submit?</strong> Press <code>Ctrl + P</code> and select "Save as PDF" for the final document.
         </div>
     </div>
 
-    <div class="page">
+    <!-- PAGE 1: TITLE PAGE -->
+    <div class="report-page">
+        <div class="title-container">
+            <div>
+                <img src="main_app.png" alt="App Icon" style="width: 80px; margin-bottom: 20px;">
+                <h1 class="title-main">Minimalist<br>Full-Stack Notes App</h1>
+                <p class="text-secondary mt-3">Advanced Web Programming Lab Project</p>
+            </div>
+            
+            <div class="submitted-by">
+                <p>SUBMITTED BY:</p>
+                <div class="student-info">Atharva Maikhuri - 235816206</div>
+                <div class="student-info">Harshita Gaurav - 235816036</div>
+            </div>
+
+            <div class="mt-5">
+                <p>APRIL 14, 2026</p>
+                <p class="text-secondary small">DEPARTMENT OF COMPUTER APPLICATIONS</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: OBJECTIVE & TECH STACK -->
+    <div class="report-page">
         <h2>1. Project Objective</h2>
         <p>The core objective of this project is to develop a lightweight, user-friendly, and highly interactive Note-Taking web application. It serves as a comprehensive demonstration of Full-Stack development concepts, focusing on the seamless integration of a Python-based backend (Django) with a dynamic JavaScript frontend (jQuery & AJAX).</p>
+        <p>The application enables users to manage digital thoughts efficiently with zero page reloads, providing a modern Single-Page Application (SPA) experience while adhering to industry standard MVT architecture.</p>
+
+        <h2>2. Technology Stack</h2>
+        <p>This project utilizes a curated stack designed for performance, modularity, and rapid development.</p>
         
-        <h2>2. Technologies Used</h2>
-        <div class="tech-box">
-            <ul>
-                <li><strong>Backend:</strong> Django 5.2.13 (Python)</li>
-                <li><strong>Frontend:</strong> HTML5, CSS3, Bootstrap 5</li>
-                <li><strong>Logic:</strong> JavaScript, jQuery 3.6.0</li>
-                <li><strong>Data Transfer:</strong> Asynchronous AJAX (JSON)</li>
-                <li><strong>Database:</strong> SQLite (Django ORM)</li>
-                <li><strong>Version Control:</strong> Git & GitHub</li>
-            </ul>
+        <div class="tech-card">
+            <h5>Backend: Python / Django</h5>
+            <p>Django was chosen for its "batteries-included" philosophy, providing robust ORM capabilities, URL routing, and security features like CSRF protection out of the box.</p>
         </div>
 
+        <div class="tech-card">
+            <h5>Frontend: Bootstrap 5 & Custom CSS</h5>
+            <p>Bootstrap provides the grid system and component structure, while custom CSS animations (Fade-In effects) ensure a premium feel without "purple" colors or bulky libraries.</p>
+        </div>
+
+        <div class="tech-card">
+            <h5>Scripting: JavaScript & jQuery</h5>
+            <p>jQuery simplifies asynchronous communication (AJAX) and real-time DOM manipulation, allowing the "notes list" to refresh instantly upon user action.</p>
+        </div>
+
+        <div class="tech-card">
+            <h5>Database: SQLite & Django ORM</h5>
+            <p>SQLite provides a zero-configuration storage engine, perfectly managed through Django's Object-Relational Mapper, abstracting complex SQL queries into clean Python code.</p>
+        </div>
+    </div>
+
+    <!-- PAGE 3: SYSTEM ARCHITECTURE -->
+    <div class="report-page">
         <h2>3. System Architecture</h2>
-        <p>The application follows the <strong>Model-View-Template (MVT)</strong> design pattern:</p>
+        <p>The system follows the <strong>Model-View-Template (MVT)</strong> design pattern, ensuring a clean separation of concerns.</p>
+        
+        <img src="main_app.png" class="screenshot" alt="Main Dashboard Screenshot">
+        <div class="fig-caption">Figure 1.0: The Main Dashboard showing live data statistics and the asynchronous notes list.</div>
+
+        <h3>A. Data Flow Diagram</h3>
+        <p>Every user action follows a structured lifecycle:</p>
+        <ol>
+            <li><strong>User Trigger</strong>: User types a note and clicks "Add".</li>
+            <li><strong>Intercept</strong>: jQuery prevents the standard form submit.</li>
+            <li><strong>Asynchronous Bridge (AJAX)</strong>: A <code>POST</code> request is sent with the JSON payload to the Django server.</li>
+            <li><strong>Backend Processing</strong>: Django validates the data, creates a record via ORM, and saves it to SQLite.</li>
+            <li><strong>Feedback Loop</strong>: The server returns a success response. jQuery catches this and re-executes the <code>loadNotes()</code> function to refresh the UI.</li>
+        </ol>
+
+        <h3>B. Models & Schema</h3>
+        <p>A single, optimized model handles the data:</p>
+        <pre>
+class Note(models.Model):
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+        </pre>
+    </div>
+
+    <!-- PAGE 4: FEATURES & VALIDATION -->
+    <div class="report-page">
+        <h2>4. Core Features</h2>
+        
+        <h3>4.1 Live Statistics Tracking</h3>
+        <p>To provide a dashboard-like experience, the application calculates and displays real-time statistics in the bottom-left corner of the viewport. This includes the total number of notes and a dynamic word count across all stored data.</p>
+
+        <h3>4.2 Real-Time Search Filtering</h3>
+        <p>Using jQuery's <code>input</code> event listener, the search bar filters notes instantly as the user types. This is done on the client-side to ensure zero-latency feedback.</p>
+
+        <h3>4.3 Comprehensive CRUD Operations</h3>
+        <p>Unlike many basic apps, this project implements a full CRUD lifecycle:</p>
         <ul>
-            <li><strong>Model:</strong> Defines the <code>Note</code> structure in the database.</li>
-            <li><strong>View:</strong> Handles business logic (adding, updating, deleting) and serves the REST API.</li>
-            <li><strong>Template:</strong> The user-facing interface, utilizing jQuery to interact with the API.</li>
+            <li><strong>Create</strong>: Via the primary Add input.</li>
+            <li><strong>Read</strong>: Automatic fetching on page load.</li>
+            <li><strong>Update</strong>: Via a stylized Bootstrap Edit Modal.</li>
+            <li><strong>Delete</strong>: With a built-in safety confirmation prompt.</li>
         </ul>
-        <h3>Interaction Workflow:</h3>
-        <p>When a user types a note and clicks <strong>Add</strong>, jQuery captures the input and sends it to the Django server via a background <code>POST</code> request. The server saves the note to the SQLite database and returns a success response. The frontend then updates the "Notes List" and "Stats Overlay" instantly without refreshing the entire page.</p>
-    </div>
 
-    <div class="page">
-        <h2>4. Features and Functionality</h2>
-        <h3>A. AJAX CRUD Operations</h3>
-        <p>The application allows for complete Create, Read, Update, and Delete actions. All interactions are asynchronous, providing a modern Single-Page Application (SPA) feel.</p>
-        <img src="main_app.png" class="screenshot" alt="Main Dashboard">
+        <h3>4.4 Form Validation & Error Handling</h3>
+        <p>To maintain data integrity, both frontend and backend validation are implemented. Empty or whitespace-only inputs are blocked, and the user is provided with immediate visual feedback through red error messages and input highlighting.</p>
         
-        <h3>B. Form Validation</h3>
-        <p>Server-side and client-side validation ensure that no empty notes are stored. If a user attempts to save an empty field, a red error notification appears dynamically.</p>
-        <img src="validation_error.png" class="screenshot" alt="Validation Error">
+        <img src="validation_error.png" class="screenshot" alt="Validation Feedback Screenshot">
+        <div class="fig-caption">Figure 2.0: Real-time validation blocking empty inputs with high-contrast red feedback.</div>
+    </div>
+
+    <!-- PAGE 5: API DOCUMENTATION -->
+    <div class="report-page">
+        <h2>5. RESTful API Documentation</h2>
+        <p>The application is built on top of a clean REST API, allowing for potential future integrations with mobile or third-party clients.</p>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Endpoint</th>
+                    <th>Request Payload</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>GET</code></td>
+                    <td><code>/api/notes/</code></td>
+                    <td>None</td>
+                    <td>Fetches all notes in descending order.</td>
+                </tr>
+                <tr>
+                    <td><code>POST</code></td>
+                    <td><code>/api/add/</code></td>
+                    <td><code>{"content": "..."}</code></td>
+                    <td>Creates a new note entry.</td>
+                </tr>
+                <tr>
+                    <td><code>POST</code></td>
+                    <td><code>/api/update/&lt;id&gt;/</code></td>
+                    <td><code>{"content": "..."}</code></td>
+                    <td>Updates an existing note by ID.</td>
+                </tr>
+                <tr>
+                    <td><code>DELETE</code></td>
+                    <td><code>/api/delete/&lt;id&gt;/</code></td>
+                    <td>None</td>
+                    <td>Removes a note permanently.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Example API Response (JSON):</h3>
+        <pre>
+[
+    {
+        "id": 14,
+        "content": "Prepare project report",
+        "created_at": "2026-04-14T14:19:04.123Z"
+    },
+    ...
+]
+        </pre>
+    </div>
+
+    <!-- PAGE 6: VISUAL PREVIEW & MODALS -->
+    <div class="report-page">
+        <h2>6. Interface Design & Modals</h2>
+        <p>A significant focus was placed on UI "flare"—maintaining a minimalist approach while ensuring the app feels interactive and smooth.</p>
         
-        <h3>C. Live Statistics Overlay</h3>
-        <p>A floating statistics panel in the bottom-left corner tracks the <strong>Total Notes</strong> and <strong>Total Word Count</strong> in real-time.</p>
-        <img src="edit_modal.png" class="screenshot" alt="Edit Modal">
+        <img src="edit_modal.png" class="screenshot" alt="Edit Modal Screenshot">
+        <div class="fig-caption">Figure 3.0: The Edit Modal providing a centered, focused editing experience for the user.</div>
+
+        <h3>Design Rationale:</h3>
+        <ul>
+            <li><strong>Color Theory</strong>: The app avoids purple, opting for a clean "Azure Blue" (#2563eb) and "Slate" design to maintain a professional, corporate look.</li>
+            <li><strong>Typography</strong>: The 'Outfit' font family provides a geometric, modern look that is easy to read across all devices.</li>
+            <li><strong>Transitions</strong>: Using <code>cubic-bezier</code> ease-outs, cards fade and slide up, providing a tactile feel to the interface.</li>
+        </ul>
     </div>
 
-    <div class="page">
-        <h2>5. Technical Implementation (Code)</h2>
-        <h3>Backend API (views.py)</h3>
-        <pre>
-@csrf_exempt
-def add_note(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        content = data.get('content', '')
-        if content:
-            note = Note.objects.create(content=content)
-            return JsonResponse({'id': note.id, 'content': note.content})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-        </pre>
+    <!-- PAGE 7: CONCLUSION -->
+    <div class="report-page">
+        <h2>7. Conclusion & Future Scope</h2>
+        <p>The Minimalist Notes Application successfully fulfills all requirements of the Web Programming Lab. By combining a robust Django backend with a dynamic, AJAX-driven frontend, we have created an application that is both technically sound and aesthetically pleasing.</p>
 
-        <h3>Frontend AJAX Logic</h3>
-        <pre>
-$('#addBtn').click(function() {
-    var content = $('#noteInput').val().trim();
-    if (content) {
-        $.ajax({
-            url: '/api/add/',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ content: content }),
-            success: function(response) {
-                $('#noteInput').val('');
-                loadNotes();
-            }
-        });
-    }
-});
-        </pre>
+        <h3>Future Scope:</h3>
+        <ul>
+            <li><strong>User Authentication</strong>: Implementing private login sessions for different users.</li>
+            <li><strong>Dark Mode</strong>: Adding a simple CSS toggle for nighttime productivity.</li>
+            <li><strong>Markdown Support</strong>: Allowing users to format their notes with basic HTML/Markdown.</li>
+            <li><strong>Auto-Save</strong>: Saving edits in real-time as the user types in the modal.</li>
+        </ul>
+
+        <div class="mt-5 text-center p-5 border-top">
+            <p class="mb-0"><strong>END OF REPORT</strong></p>
+            <p class="text-secondary small">Atharva Maikhuri | Harshita Gaurav</p>
+        </div>
     </div>
 
-    <div class="page" style="text-align: center; padding-top: 100px;">
-        <h2>6. Conclusion</h2>
-        <p>By integrating a RESTful API with a dynamic frontend, this project demonstrates a modern approach to web application architecture. The use of Django ensures security and scalability, while jQuery and Bootstrap provide a responsive and alive user experience.</p>
-        <hr>
-        <p><em>Project Submitted for Web Programming Lab Evaluation.</em></p>
-    </div>
 </body>
 </html>
