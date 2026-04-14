@@ -1,0 +1,126 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{titlesec}
+
+% Colors for code blocks
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\title{\textbf{Minimalist Full-Stack Notes Application}}
+\author{Atharva Maikhuri (235816206) \\ Harshita Gaurav (235816036)}
+\date{April 14, 2026}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Project Overview}
+\subsection{Objective}
+The objective of this project is to build a complete, minimalist web application that demonstrates the integration of modern web technologies. The application allows users to manage personal notes through a clean, interactive interface. Key technical goals include implementing a RESTful API, performing asynchronous database operations without page reloads (AJAX), and utilizing the Django framework for robust server-side logic.
+
+\section{Technologies Used}
+The project leverages a modern full-stack development environment:
+\begin{itemize}
+    \item \textbf{Backend}: Python 3.10 with the \textbf{Django Framework}.
+    \item \textbf{Frontend}: HTML5, CSS3, and \textbf{Bootstrap 5} for responsive design.
+    \item \textbf{Client-Side Logic}: JavaScript and \textbf{jQuery}.
+    \item \textbf{Asynchronous Updates}: \textbf{AJAX} for seamless Create, Read, Update, and Delete (CRUD) operations.
+    \item \textbf{Database}: \textbf{SQLite} (managed via Django ORM).
+    \item \textbf{REST API}: Custom API endpoints returning and accepting JSON data.
+\end{itemize}
+
+\section{System Architecture}
+\subsection{Workflow}
+The application follows a Model-View-Template (MVT) architecture.
+\begin{enumerate}
+    \item \textbf{User Interface}: Built with HTML and Bootstrap, enhanced with jQuery animations.
+    \item \textbf{AJAX Layer}: Handles background communication. When a user adds a note, jQuery intercepts the form submission and sends an AJAX POST request.
+    \item \textbf{Django Server}: Receives the request, processes the data through \textbf{views.py}, and interacts with the \textbf{Note Model}.
+    \item \textbf{Data Persistence}: The Django ORM translates Python calls into SQL commands for the SQLite database.
+    \item \textbf{JSON Response}: The server returns a status message or updated data in JSON format, which jQuery uses to update the UI without refreshing the page.
+\end{enumerate}
+
+\section{Implementation Details}
+\subsection{Backend Logic (views.py)}
+The backend uses standard Django views to render the main page and specialized API views for data operations.
+\begin{lstlisting}[language=Python]
+@csrf_exempt
+def add_note(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        content = data.get('content', '')
+        if content:
+            note = Note.objects.create(content=content)
+            return JsonResponse({'id': note.id, 'content': note.content})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+\end{lstlisting}
+
+\subsection{Frontend Interactions (index.html)}
+jQuery is used to consume the REST API endpoints.
+\begin{lstlisting}[language=JavaScript]
+$('#addBtn').click(function() {
+    var content = $('#noteInput').val().trim();
+    if (content) {
+        $.ajax({
+            url: '/api/add/',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ content: content }),
+            success: function(response) {
+                $('#noteInput').val('');
+                loadNotes();
+            }
+        });
+    }
+});
+\end{lstlisting}
+
+\section{Application Screenshots}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{app_main.png}
+    \caption{Main Application Interface showing Dynamic Stats and Notes List}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{app_edit.png}
+    \caption{Edit Note Modal (AJAX-powered update functionality)}
+\end{figure}
+
+\section{Conclusion}
+This project successfully demonstrates the power of combining Django's robust backend with jQuery's flexible frontend interactions. By utilizing AJAX and a RESTful API, we created a smooth user experience that mirrors modern Single-Page Applications (SPAs).
+
+\end{document}

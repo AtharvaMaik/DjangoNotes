@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Report - Notes App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f3f4f6; font-family: 'Segoe UI', serif; line-height: 1.6; }
+        .page { background: white; width: 210mm; min-height: 297mm; padding: 20mm; margin: 20px auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 30px; }
+        .title-page { text-align: center; padding-top: 100px; padding-bottom: 200px; border-bottom: none; }
+        .authors { font-size: 1.2rem; margin-top: 50px; color: #64748b; }
+        .screenshot { width: 100%; border-radius: 8px; border: 1px solid #e2e8f0; margin: 20px 0; }
+        code { background: #f1f5f9; padding: 2px 5px; border-radius: 4px; color: #be185d; }
+        pre { background: #1e293b; color: #f8fafc; padding: 15px; border-radius: 8px; overflow-x: auto; }
+        .tech-box { background: #eff6ff; border-left: 4px solid #2563eb; padding: 15px; margin: 20px 0; }
+        @media print {
+            body { background: none; }
+            .page { margin: 0; box-shadow: none; border: none; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="title-page">
+            <h1 style="font-size: 3.5rem; border: none;">Minimalist Full-Stack<br>Notes Application</h1>
+            <p style="font-size: 1.5rem; margin-top: 20px;">Semester Project Report - Web Programming</p>
+            <div class="authors">
+                <p><strong>Submitted By:</strong></p>
+                <p>Atharva Maikhuri (235816206)</p>
+                <p>Harshita Gaurav (235816036)</p>
+            </div>
+            <p style="margin-top: 100px;">April 14, 2026</p>
+        </div>
+    </div>
+
+    <div class="page">
+        <h2>1. Project Objective</h2>
+        <p>The core objective of this project is to develop a lightweight, user-friendly, and highly interactive Note-Taking web application. It serves as a comprehensive demonstration of Full-Stack development concepts, focusing on the seamless integration of a Python-based backend (Django) with a dynamic JavaScript frontend (jQuery & AJAX).</p>
+        
+        <h2>2. Technologies Used</h2>
+        <div class="tech-box">
+            <ul>
+                <li><strong>Backend:</strong> Django 5.2.13 (Python)</li>
+                <li><strong>Frontend:</strong> HTML5, CSS3, Bootstrap 5</li>
+                <li><strong>Logic:</strong> JavaScript, jQuery 3.6.0</li>
+                <li><strong>Data Transfer:</strong> Asynchronous AJAX (JSON)</li>
+                <li><strong>Database:</strong> SQLite (Django ORM)</li>
+                <li><strong>Version Control:</strong> Git & GitHub</li>
+            </ul>
+        </div>
+
+        <h2>3. System Architecture</h2>
+        <p>The application follows the <strong>Model-View-Template (MVT)</strong> design pattern:</p>
+        <ul>
+            <li><strong>Model:</strong> Defines the <code>Note</code> structure in the database.</li>
+            <li><strong>View:</strong> Handles business logic (adding, updating, deleting) and serves the REST API.</li>
+            <li><strong>Template:</strong> The user-facing interface, utilizing jQuery to interact with the API.</li>
+        </ul>
+        <h3>Interaction Workflow:</h3>
+        <p>When a user types a note and clicks <strong>Add</strong>, jQuery captures the input and sends it to the Django server via a background <code>POST</code> request. The server saves the note to the SQLite database and returns a success response. The frontend then updates the "Notes List" and "Stats Overlay" instantly without refreshing the entire page.</p>
+    </div>
+
+    <div class="page">
+        <h2>4. Features and Functionality</h2>
+        <h3>A. AJAX CRUD Operations</h3>
+        <p>The application allows for complete Create, Read, Update, and Delete actions. All interactions are asynchronous, providing a modern Single-Page Application (SPA) feel.</p>
+        <img src="app_main_1776157548613.png" class="screenshot" alt="Main Dashboard">
+        
+        <h3>B. Form Validation</h3>
+        <p>Server-side and client-side validation ensure that no empty notes are stored. If a user attempts to save an empty field, a red error notification appears dynamically.</p>
+        
+        <h3>C. Live Statistics Overlay</h3>
+        <p>A floating statistics panel in the bottom-left corner tracks the <strong>Total Notes</strong> and <strong>Total Word Count</strong> in real-time.</p>
+    </div>
+
+    <div class="page">
+        <h2>5. Technical Implementation (Code)</h2>
+        <h3>Backend API (views.py)</h3>
+        <pre>
+@csrf_exempt
+def add_note(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        content = data.get('content', '')
+        if content:
+            note = Note.objects.create(content=content)
+            return JsonResponse({'id': note.id, 'content': note.content})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+        </pre>
+
+        <h3>Frontend AJAX Logic</h3>
+        <pre>
+$('#addBtn').click(function() {
+    var content = $('#noteInput').val().trim();
+    if (content) {
+        $.ajax({
+            url: '/api/add/',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ content: content }),
+            success: function(response) {
+                $('#noteInput').val('');
+                loadNotes();
+            }
+        });
+    }
+});
+        </pre>
+    </div>
+
+    <div class="page" style="text-align: center; padding-top: 100px;">
+        <h2>6. Conclusion</h2>
+        <p>By integrating a RESTful API with a dynamic frontend, this project demonstrates a modern approach to web application architecture. The use of Django ensures security and scalability, while jQuery and Bootstrap provide a responsive and alive user experience.</p>
+        <hr>
+        <p><em>Project Submitted for Web Programming Lab Evaluation.</em></p>
+    </div>
+</body>
+</html>
