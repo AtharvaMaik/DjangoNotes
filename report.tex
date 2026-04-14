@@ -53,13 +53,13 @@
     \vspace*{1cm}
     {\Huge \textbf{Minimalist Full-Stack}}\\[0.5cm]
     {\Huge \textbf{Notes Application}}\\[1cm]
-    {\Large Advanced Web Programming Lab Project}\\[2cm]
+    {\Large Semester Project | Web Programming Lab}\\[2cm]
     
-    \includegraphics[width=0.85\textwidth]{main_app.png}\\[1.5cm] % Enlarged Title Image
+    \includegraphics[width=0.85\textwidth]{main_app.png}\\[1.5cm]
     
     {\large \textbf{SUBMITTED BY:}}\\[0.5cm]
-    {\large Atharva Maikhuri (235816206)}\\
-    {\large Harshita Gaurav (235816036)}\\[2cm]
+    {\large \textbf{Atharva Maikhuri} (235816206)}\\
+    {\large \textbf{Harshita Gaurav} (235816036)}\\[2cm]
     
     {\large April 14, 2026}\\[1cm]
     {\large \textbf{DEPARTMENT OF COMPUTER APPLICATIONS}}
@@ -74,25 +74,32 @@
 The core objective of this project is to develop a lightweight, user-friendly, and highly interactive Note-Taking web application. It serves as a comprehensive demonstration of Full-Stack development concepts, focusing on the seamless integration of a Python-based backend (Django) with a dynamic JavaScript frontend (jQuery \& AJAX).
 The project scope encompasses real-time data management through a RESTful architecture, ensuring a smooth user experience that mirrors modern Single-Page Applications (SPAs).
 
+\newpage
 \section{Design Philosophy: The Power of Minimalism}
-In modern web development, ``Minimalism'' is not just an aesthetic choice but a usability priority. This application was designed to reduce cognitive load by focusing on core functionality while ensuring high-quality interactions. By avoiding common generic templates and opting for a professional Azure/Slate theme, we created a tool that feels focused and purpose-built.
-Key principles include No-Reload Interaction, Visual Hierarchy, and Responsive Feedback.
+In modern web development, ``Minimalism'' is not just an aesthetic choice but a usability priority. This application was designed to reduce cognitive load by focusing on core functionality while ensuring high-quality interactions. By avoiding the common ``purple'' color palettes of generic templates and opting for a professional Azure/Slate theme, we created a tool that feels focused and purpose-built.
 
-% --- SECTION 2 ---
+Key principles include:
+\begin{enumerate}
+    \item \textbf{No-Reload Interaction}: Every core action (CRUD) is asynchronous.
+    \item \textbf{Visual Hierarchy}: Prominent task statistics provide immediate utility.
+    \item \textbf{Responsive Feedback}: Transitions keep the user connected to the data lifecycle.
+\end{enumerate}
+
+\newpage
 \section{Detailed Technology Stack}
 This project utilizes a curated stack designed for performance and rapid development.
 \begin{itemize}
     \item \textbf{Backend: Django \& its Ecosystem}: Django serves as the ``brain,'' providing a high-security environment with an integrated Object-Relational Mapper (ORM).
     \item \textbf{Frontend: Bootstrap 5 \& jQuery}: Bootstrap provides the flexible grid system, while jQuery acts as the logic engine.
-    \item \textbf{Database: SQLite}: Used via the Django ORM to provide a zero-configuration, robust storage engine.
+    \item \textbf{Database: SQLite}: Used via the Django ORM to provide a robust storage engine.
 \end{itemize}
 
 \section{Scalability and Efficiency}
-While currently utilizing an SQLite backend, the system is designed with scalability in mind. The Django ORM allows for a ``plug-and-play'' transition to enterprise-grade databases like PostgreSQL without changing business logic. The client-side search filtering is optimized to handle hundreds of notes with minimal latency.
+While currently utilizing an SQLite backend, the system is designed with scalability in mind. The Django ORM allows for a ``plug-and-play'' transition to databases like PostgreSQL. The client-side search filtering is optimized to handle hundreds of notes with minimal latency.
 
-% --- SECTION 3 ---
+\newpage
 \section{System Architecture}
-The application follows the Model-View-Template (MVT) design pattern, ensuring a clean separation of data, logic, and presentation.
+The application follows the Model-View-Template (MVT) design pattern, ensuring a clean separation of concerns.
 
 \begin{figure}[h]
     \centering
@@ -107,23 +114,23 @@ Every user action follows a structured lifecycle:
     \item \textbf{The Intercept}: jQuery stops the page from reloading.
     \item \textbf{The Transmission}: An AJAX POST request is sent with a JSON payload.
     \item \textbf{The Backend Processing}: Django validates and saves the record through the ORM.
-    \item \textbf{The Feedback}: The server returns a success signal, and the UI updates in milliseconds.
+    \item \textbf{The Feedback}: The server returns a success signal, and the UI updates instantly.
 \end{enumerate}
 
-% --- SECTION 4 ---
+\newpage
 \section{Security and Input Integrity}
 \subsection{CSRF Protection in AJAX}
-To prevent Cross-Site Request Forgery, state-changing requests include CSRF tokens, a critical pillar of project security.
+To prevent Cross-Site Request Forgery, state-changing requests include CSRF tokens. This is handled dynamically by extracting the cookie or using injected headers.
 \subsection{Real-time Form Validation}
 Invalid data is blocked before reaching the server, reducing load and improving user experience.
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\textwidth]{validation_error.png}
-    \caption{Dynamic validation prevent empty entries.}
+    \includegraphics[width=0.65\textwidth]{validation_error.png}
+    \caption{Dynamic validation preventing empty entries.}
 \end{figure}
 
-% --- SECTION 5 ---
-\section{RESTful API Documentation}
+\newpage
+\section{RESTful API Reference}
 \begin{table}[h]
     \centering
     \begin{tabular}{@{}llll@{}}
@@ -140,11 +147,19 @@ Invalid data is blocked before reaching the server, reducing load and improving 
 Bootstrap Modals ensure a focused editing experience. The code's modular structure allows for easy future extensions like Category or Priority fields.
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.6\textwidth]{edit_modal.png}
+    \includegraphics[width=0.65\textwidth]{edit_modal.png}
     \caption{The Edit Modal centered on the viewport.}
 \end{figure}
 
+\newpage
 \section{Conclusion}
-The Minimalist Notes Application successfully fulfills all requirements. By bridging Python's server-side strengths and JavaScript's frontend agility, we produced a modern, sleek, and highly functional application.
+The Minimalist Notes Application successfully fulfills all technical and design requirements. By bridging the gap between Python's server-side strengths and JavaScript's frontend agility, we have produced a modern, sleek, and highly functional application.
+
+\begin{center}
+    \vspace{2cm}
+    \textbf{END OF PROJECT REPORT}\\
+    \small Atharva Maikhuri (235816206) | Harshita Gaurav (235816036)\\
+    April 14, 2026
+\end{center}
 
 \end{document}
