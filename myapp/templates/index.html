@@ -27,7 +27,6 @@
             color: #0f172a;
             margin-bottom: 2rem;
         }
-        /* Custom Colors (Strictly No Purple) */
         .btn-primary {
             background-color: #2563eb;
             border: none;
@@ -35,11 +34,6 @@
         .btn-primary:hover {
             background-color: #1d4ed8;
         }
-        .btn-success {
-            background-color: #059669;
-            border: none;
-        }
-        /* Animations & Flare */
         .note-card {
             background: white;
             border-radius: 12px;
@@ -76,10 +70,34 @@
         .search-container {
             margin-bottom: 2rem;
         }
+        /* Stats Styling */
+        #statsOverlay {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #ffffff;
+            padding: 12px 18px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+            z-index: 1000;
+            color: #64748b;
+        }
+        .stats-val {
+            color: #0f172a;
+            font-weight: 600;
+        }
+        .error-feedback {
+            color: #dc2626;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container mt-5 mb-5">
         <h1 class="text-center">My Notes</h1>
         
         <!-- Search Bar -->
@@ -93,12 +111,19 @@
                 <input type="text" id="noteInput" class="form-control me-2" placeholder="Type a new note...">
                 <button class="btn btn-primary px-4" id="addBtn">Add</button>
             </div>
+            <div id="addError" class="error-feedback">Note content cannot be empty!</div>
         </div>
 
         <!-- Notes List -->
         <div id="notesList">
             <!-- Notes will be loaded here via AJAX -->
         </div>
+    </div>
+
+    <!-- Stats Overlay -->
+    <div id="statsOverlay">
+        <div>Total Notes: <span id="totalNotes" class="stats-val">0</span></div>
+        <div>Words Stored: <span id="totalWords" class="stats-val">0</span></div>
     </div>
 
     <!-- Edit Modal -->
@@ -112,6 +137,7 @@
                 <div class="modal-body">
                     <input type="hidden" id="editNoteId">
                     <textarea id="editNoteContent" class="form-control" rows="4"></textarea>
+                    <div id="editError" class="error-feedback">Note content cannot be empty!</div>
                 </div>
                 <div class="modal-footer border-0 pt-0">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
@@ -125,21 +151,26 @@
         $(document).ready(function() {
             loadNotes();
 
-            // Add note
+            // Add note with validation
             $('#addBtn').click(function() {
-                var content = $('#noteInput').val();
-                if (content) {
-                    $.ajax({
-                        url: '/api/add/',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ content: content }),
-                        success: function(response) {
-                            $('#noteInput').val('');
-                            loadNotes();
-                        }
-                    });
+                var content = $('#noteInput').val().trim();
+                if (!content) {
+                    $('#addError').fadeIn().delay(2000).fadeOut();
+                    $('#noteInput').addClass('is-invalid');
+                    setTimeout(() => $('#noteInput').removeClass('is-invalid'), 2000);
+                    return;
                 }
+                
+                $.ajax({
+                    url: '/api/add/',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ content: content }),
+                    success: function(response) {
+                        $('#noteInput').val('');
+                        loadNotes();
+                    }
+                });
             });
 
             // Search notes
@@ -151,22 +182,27 @@
                 });
             });
 
-            // Save edited note
+            // Save edited note with validation
             $('#saveEditBtn').click(function() {
                 var id = $('#editNoteId').val();
-                var content = $('#editNoteContent').val();
-                if (content) {
-                    $.ajax({
-                        url: '/api/update/' + id + '/',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ content: content }),
-                        success: function(response) {
-                            $('#editModal').modal('hide');
-                            loadNotes();
-                        }
-                    });
+                var content = $('#editNoteContent').val().trim();
+                if (!content) {
+                    $('#editError').fadeIn().delay(2000).fadeOut();
+                    $('#editNoteContent').addClass('is-invalid');
+                    setTimeout(() => $('#editNoteContent').removeClass('is-invalid'), 2000);
+                    return;
                 }
+
+                $.ajax({
+                    url: '/api/update/' + id + '/',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ content: content }),
+                    success: function(response) {
+                        $('#editModal').modal('hide');
+                        loadNotes();
+                    }
+                });
             });
         });
 
@@ -176,7 +212,13 @@
                 type: 'GET',
                 success: function(notes) {
                     var html = '';
+                    var wordCount = 0;
+                    
                     notes.forEach(function(note, index) {
+                        // Calculate word count
+                        var words = note.content.trim().split(/\s+/).filter(w => w.length > 0);
+                        wordCount += words.length;
+
                         html += `
                             <div class="note-card card mb-3 p-1" style="animation-delay: ${index * 0.05}s">
                                 <div class="card-body d-flex justify-content-between align-items-center">
@@ -190,6 +232,11 @@
                         `;
                     });
                     $('#notesList').html(html);
+                    
+                    // Update Stats
+                    $('#totalNotes').text(notes.length);
+                    $('#totalWords').text(wordCount);
+                    
                     // Re-apply search filter if user was searching
                     $('#searchInput').trigger('input');
                 }
