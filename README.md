@@ -6,8 +6,6 @@
 ![Language](https://img.shields.io/badge/Language-JavaScript-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-System.Object[]
-
 A clean, full-stack Note-Taking application built with **Django**, **jQuery**, and **Bootstrap**. This project features smooth animations, real-time search, and a complete RESTful API.
 
 ![Notes App Preview](https://img.shields.io/badge/Tech-Django%20|%20jQuery%20|%20Bootstrap%20|%20SQLite-blue)
