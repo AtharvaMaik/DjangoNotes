@@ -1,7 +1,6 @@
 # Modern Minimalist Notes App
 
-![Language](https://img.shields.io/badge/Language-HTML-blue)
-![License](https://img.shields.io/badge/License-No%20license%20specified-lightgrey)
+System.Object[]
 
 A clean, full-stack Note-Taking application built with **Django**, **jQuery**, and **Bootstrap**. This project features smooth animations, real-time search, and a complete RESTful API.
 
